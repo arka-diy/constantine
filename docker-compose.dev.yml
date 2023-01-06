@@ -1,0 +1,24 @@
+version: "2"
+services:
+  arka-constantine:
+    container_name: arka-constantine
+    restart: always
+    build: .
+    ports:
+      - "3330:3330"
+    volumes:
+      - ./src:/app/src
+    environment:
+      - NODE_ENV=dev
+      - DEBUG=express:*
+    links:
+      - arka-mongo
+  arka-mongo:
+    container_name: arka-mongo
+    image: mongo
+    restart: unless-stopped
+    command: 
+      - "--logpath"
+      - "/var/log/mongodb/mongod.log"
+    ports:
+      - "27017:27017"

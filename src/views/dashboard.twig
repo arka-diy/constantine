@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Arka</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com"> 
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+	<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,700;1,100;1,700&display=swap" rel="stylesheet">
+	<link href="/css/dashboard.css" rel="stylesheet">
+</head>
+<body>
+	<img src="/images/logo.svg" height="120">
+
+	<nav>
+		<a href="/arka" class="outlined">What's Arka?</a>
+		<!-- <a href="/login" class="hidden if loggedin">Log in</a> -->
+		<a href="/devices" class="hidden ifnot loggedin">Devices</a>
+		<a href="/profile" class="hidden ifnot loggedin">Profile</a>
+	</nav>
+
+	<main>
+		<div class="arka">
+			<div id="screen"></div>
+		</div>
+		<div class="magnifier">
+			<div class="button" id="magnify1x">1x</div>
+			<div class="button active" id="magnify2x">2x</div>
+			<div class="button hidden if phone" id="magnify3x">3x</div>
+		</div>
+		<div class="info">
+			<div class="title">
+				<h1></h1>
+				<div class="preview button">Preview</div>
+			</div>
+			<h3></h3>
+			<div class="description"></div>
+		</div>
+	</main>
+
+	<script src="/js/xhr.js"></script>
+	<script src="/js/arkas/noise.js"></script>
+	<script src="/js/dashboard.js"></script>
+</body>
+</html>

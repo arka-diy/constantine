@@ -1,0 +1,17 @@
+{
+  "name": "Constantine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index",
+    "dev": "nodemon -e js,twig src/index"
+  },
+  "author": "Aleksei Pugachev",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.3",
+    "mongoose": "^6.3.0",
+    "twig": "^1.15.4"
+  }
+}

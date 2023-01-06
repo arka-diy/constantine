@@ -1,0 +1,271 @@
+* {
+	box-sizing: border-box;
+	font-family: 'JetBrains Mono', sans-serif;
+	font-weight: 100;
+}
+
+body {
+	margin: 0;
+}
+
+img {
+	margin: 18px 18px 12px 18px;
+}
+
+nav {
+	margin: 0 18px 36px 18px;
+}
+
+nav a {
+	display: inline-block;
+	text-decoration: none;
+
+	background-color: black;
+	color: white;
+
+	margin-top: 6px;
+	padding: 4px 6px;
+}
+
+nav a:hover {
+	color: #ddd;
+}
+
+nav a.outlined {
+	border: 1px solid black;
+
+	background-color: white;
+	color: black;
+}
+
+nav a.outlined:hover {
+	color: #777;
+}
+
+main {
+	position: relative;
+
+	width: 100%;
+	height: 540px;
+}
+
+main .arka {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+
+	margin-top: -200px;
+	margin-left: -130px;
+
+	width: 260px;
+	height: 260px;
+
+	background-color: black;
+
+	border-radius: 12px;
+
+	transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+main.x1 .arka {
+	margin-top: -135px;
+	margin-left: -65px;
+
+	width: 130px;
+	height: 130px;
+
+	border-radius: 4px;
+}
+
+main.x3 .arka {
+	margin-top: -265px;
+	margin-left: -195px;
+
+	width: 390px;
+	height: 390px;
+
+	border-radius: 20px;
+}
+
+main #screen {
+	position: relative;
+	top: 10px;
+	left: 10px;
+
+	width: 240px;
+	height: 240px;
+
+	background-color: #131313;
+
+	transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+main.x1 #screen {
+	position: relative;
+	top: 5px;
+	left: 5px;
+
+	width: 120px;
+	height: 120px;
+}
+
+main.x3 #screen {
+	position: relative;
+	top: 15px;
+	left: 15px;
+
+	width: 360px;
+	height: 360px;
+}
+
+main #screen canvas {
+	position: relative;
+	top: -1px;
+	left: -1px;
+
+	transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+main.x1 #screen canvas {
+	top: -0.5px;
+	left: -0.5px;
+}
+
+main.x3 #screen canvas {
+	top: -2px;
+	left: -2px;
+}
+
+main .magnifier {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+
+	margin-top: 140px;
+	margin-left: -130px;
+
+	width: 260px;
+	height: 70px;
+
+	text-align: center;
+}
+
+main .magnifier .button {
+	display: inline-block;
+
+	padding-top: 6px;
+
+	width: 30px;
+	height: 30px;
+
+	border: 1px solid #ddd;
+	border-radius: 15px;
+	color: #ddd;
+
+	font-size: 12px;
+
+	cursor: pointer;
+
+	transition: all 0.2s;
+	transform: scale(0.95);
+}
+
+main .magnifier .button:hover {
+	border-color: #aaa;
+	color: #aaa;
+}
+
+main .magnifier .button.active {
+	border-color: #222;
+	color: #222;
+
+	font-weight: 700;
+
+	cursor: default;
+	pointer-events: none;
+
+	transform: scale(1);
+}
+
+main .info {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+
+	margin-top: 170px;
+	margin-left: -130px;
+
+	width: 260px;
+
+	text-align: center;
+}
+
+main .info .title h1 {
+	display: inline-block;
+
+	margin-top: 16px;
+	margin-bottom: 0;
+
+	font-weight: 700;
+}
+
+main .info .title .preview.button {
+	display: inline-block;
+
+	position: relative;
+	top: -5px;
+
+	padding: 6px 8px 0 8px;
+
+	height: 30px;
+
+	font-size: 12px;
+	font-weight: 700;
+
+	border: 2px solid #000;
+	border-radius: 15px;
+	color: #000;
+
+	cursor: pointer;
+
+	transition: all 0.2s;
+}
+
+main .info .title .preview.button:active {
+	background-color: black;
+	color: white;
+}
+
+main .info h3 {
+	margin-top: 0;
+	margin-bottom: 20px;
+
+	font-size: 14px;
+}
+
+main .info .description {
+	margin-bottom: 24px;
+
+	font-size: 11px;
+	font-style: italic;
+}
+
+@media only screen and (max-width: 640px) {
+
+	.hidden.if.phone {
+		display: none;
+	}
+
+	main {
+		height: 400px;
+	}
+
+	main .magnifier {
+		margin-top: 90px;
+	}
+
+	main .info {
+		margin-top: 120px;
+	}
+
+}
