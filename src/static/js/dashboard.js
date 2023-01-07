@@ -89,7 +89,7 @@ function drawScreen() {
 
 function nextFrame() {
 	if(loop) clearTimeout(loop);
-	loop = setTimeout(drawScreen, 20);
+	loop = setTimeout(drawScreen, 40);
 }
 
 initScreen();
