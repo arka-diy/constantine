@@ -2,25 +2,35 @@ const net = require("net")
 
 module.exports = (LIT) => {
 
-	const client = new net.Socket()
+	var client
 	var reconnect
-
-	client.on("data", function(data) {
-		console.log("Received: " + data)
-		// client.destroy()
-	})
-
-	client.on("close", function() {
-		console.log("Connection closed")
-		clearTimeout(reconnect)
-		reconnect = setTimeout(connect, 3000)
-	})
+	var reconnectDelay = 1000
 
 	function connect() {
+		client = new net.Socket()
+
 		client.connect(8080, "192.168.1.101", function() {
-			console.log("Connected")
+			console.log("C: CONNECTED")
+
+			reconnectDelay = 1000
 		})
-		.on("error", (err) => console.log("not connected"))
+		.on("error", (error) => {
+			console.log("C: ERR " + error)
+		})
+		.on("data", (data) => {
+			console.log("C: RX " + data)
+			// client.destroy()
+		})
+		.on("close", () => {
+			console.log("C: CLOSED, RECONNECT IN " + reconnectDelay + "ms...")
+
+			client = null
+			if(reconnectDelay < 60000) reconnectDelay = parseInt(reconnectDelay * 1.5, 10)
+			else reconnectDelay = 60000
+
+			clearTimeout(reconnect)
+			reconnect = setTimeout(connect, reconnectDelay)
+		})
 	}
 
 	connect()
@@ -39,9 +49,12 @@ module.exports = (LIT) => {
 		const frames = req.body.frames
 		const packed = frames.map((frame) => { return frame.map((line) => { return line.map((pixel) => { return pixel.toString() }).join("") }).join("") }).join("")
 		
-		client.write(packed + ".")
-
-		res.send({ ok: true })
+		if(client) {
+			client.write(packed + ".")
+			res.send({ ok: true })
+		} else {
+			res.send({ ok: false })
+		}
 	}
 
 }
