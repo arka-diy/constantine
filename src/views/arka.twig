@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Arka</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com"> 
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+	<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,700;1,100;1,700&display=swap" rel="stylesheet">
+	<link href="/css/shared.css" rel="stylesheet">
+	<link href="/css/arka.css" rel="stylesheet">
+</head>
+<body>
+	<header>
+		<img class="logo" src="/images/logo.svg">
+
+		<nav>
+			<a href="/arka" class="outlined">What's Arka?</a>
+			<!-- <a href="/login" class="hidden if loggedin">Log in</a> -->
+			<a href="/devices" class="hidden ifnot loggedin">Devices</a>
+			<a href="/profile" class="hidden ifnot loggedin">Profile</a>
+		</nav>
+	</header>
+
+	<main>
+		<div class="slider">
+			<div class="slide active" data-arka="standby"></div>
+			<div class="slide" data-arka="torrent"></div>
+			<div class="slide" data-arka="noise"></div>
+		</div>
+		<div class="panel">
+			<div class="magnifier">
+				<div class="magnify1x button">1x</div>
+				<div class="magnify2x button active">2x</div>
+				<div class="magnify3x button hidden if phone">3x</div>
+			</div>
+			<div class="info transparent">
+				<div class="title">
+					<h1>A</h1>
+					<div class="preview button">Preview</div>
+					<div class="edit button hidden if phone">&nbsp;</div>
+				</div>
+				<h3>A</h3>
+				<div class="description">A</div>
+			</div>
+			<div class="timeline hidden if phone transparent">
+				<div class="header">
+					<div class="name"></div>
+					<div class="frames"></div>
+				</div>
+				<div class="layer">
+					<div class="name">Top</div>
+					<div class="frames"></div>
+				</div>
+				<div class="layer">
+					<div class="name">Middle</div>
+					<div class="frames"></div>
+				</div>
+				<div class="layer">
+					<div class="name">Bottom</div>
+					<div class="frames"></div>
+				</div>
+			</div>
+		</div>
+		<div class="toolbar hidden if phone transparent">
+			<div class="tool collapsed">
+				<div class="pixel button"></div>
+				<div class="fill button"></div>
+			</div>
+			<div class="palette">
+				<div class="color button" data-color="ffff"></div>
+				<div class="current-colors">
+					<div class="color button" data-color="b8a6"></div>
+					<div class="color button" data-color="494b"></div>
+					<div class="color button" data-color="f661"></div>
+					<div class="color button" data-color="7e0a"></div>
+					<div class="color button" data-color="35f4"></div>
+					<div class="color button" data-color="9785"></div>
+					<div class="color button" data-color="49fd"></div>
+				</div>
+				<div class="add-colors"></div>
+				<div class="add button"></div>
+				<div class="color button" data-color="0000"></div>
+			</div>
+			<div class="clear button"></div>
+		</div>
+	</main>
+
+	<div class="draw-corner-panel transparent">
+		<div class="share button"></div>
+		<div class="save button">Save</div>
+		<div class="cancel button">Cancel</div>
+	</div>
+
+	<div class="draw-sharer transparent">
+		<div class="text"></div>
+		<div class="copy button">Copy</div>
+		<div class="close button">Close</div>
+	</div>
+
+	<script src="/js/xhr.js"></script>
+	<script src="/js/xhr.arka.js"></script>
+
+	<script src="/js/arkas/arka.js"></script>
+	<script src="/js/arkas/noise.js"></script>
+	<script src="/js/arkas/standby.js"></script>
+	<script src="/js/arkas/torrent.js"></script>
+
+	<script src="/js/arka.utilities.js"></script>
+	<script src="/js/arka.screen.js"></script>
+	<script src="/js/arka.slider.js"></script>
+	<script src="/js/arka.painter.js"></script>
+	<script src="/js/arka.animator.js"></script>
+	
+	<script src="/js/arka.js"></script>
+</body>
+</html>

@@ -36,13 +36,17 @@ module.exports = (LIT) => {
 
 	connect()
 
-	LIT.app.get("/", dashboard)
+	// Arka (/)
 
-	async function dashboard(req, res) {
-		res.render("dashboard.twig", {
+	LIT.app.get("/", arka)
+
+	async function arka(req, res) {
+		res.render("arka.twig", {
 			
 		})
 	}
+
+	// API: Arka Preview (/api/preview)
 
 	LIT.app.post("/api/preview", preview)
 
