@@ -9,36 +9,98 @@
 	<link href="/css/dashboard.css" rel="stylesheet">
 </head>
 <body>
-	<img src="/images/logo.svg" height="120">
+	<header>
+		<img class="logo" src="/images/logo.svg">
 
-	<nav>
-		<a href="/arka" class="outlined">What's Arka?</a>
-		<!-- <a href="/login" class="hidden if loggedin">Log in</a> -->
-		<a href="/devices" class="hidden ifnot loggedin">Devices</a>
-		<a href="/profile" class="hidden ifnot loggedin">Profile</a>
-	</nav>
+		<nav>
+			<a href="/arka" class="outlined">What's Arka?</a>
+			<!-- <a href="/login" class="hidden if loggedin">Log in</a> -->
+			<a href="/devices" class="hidden ifnot loggedin">Devices</a>
+			<a href="/profile" class="hidden ifnot loggedin">Profile</a>
+		</nav>
+	</header>
+
+	<div class="draw-close transparent">
+		<div id="draw-save" class="button">Save</div>
+		<div id="draw-cancel" class="button">Cancel</div>
+	</div>
 
 	<main>
-		<div class="arka">
-			<div id="screen"></div>
-		</div>
-		<div class="magnifier">
-			<div class="button" id="magnify1x">1x</div>
-			<div class="button active" id="magnify2x">2x</div>
-			<div class="button hidden if phone" id="magnify3x">3x</div>
-		</div>
-		<div class="info">
-			<div class="title">
-				<h1></h1>
-				<div class="preview button">Preview</div>
+		<div id="slider">
+			<div class="slide active" data-arka="standby">
+				<div class="arka">
+					<div class="screen"></div>
+				</div>
 			</div>
-			<h3></h3>
-			<div class="description"></div>
+			<div class="slide" data-arka="torrent">
+				<div class="arka">
+					<div class="screen"></div>
+				</div>
+			</div>
+			<div class="slide" data-arka="noise">
+				<div class="arka">
+					<div class="screen"></div>
+				</div>
+			</div>
+		</div>
+		<div class="panel">
+			<div class="magnifier">
+				<div class="button" id="magnify1x">1x</div>
+				<div class="button active" id="magnify2x">2x</div>
+				<div class="button hidden if phone" id="magnify3x">3x</div>
+			</div>
+			<div class="info transparent">
+				<div class="title">
+					<h1>A</h1>
+					<div id="preview" class="button">Preview</div>
+					<div id="edit" class="button hidden if phone">🎨</div>
+				</div>
+				<h3>A</h3>
+				<div class="description">A</div>
+			</div>
+			<div class="timeline hidden if phone transparent">
+				<div class="header">
+					<div class="name"></div>
+					<div class="frames"></div>
+				</div>
+				<div class="layer">
+					<div class="name">Top</div>
+					<div class="frames"></div>
+				</div>
+				<div class="layer">
+					<div class="name">Middle</div>
+					<div class="frames"></div>
+				</div>
+				<div class="layer">
+					<div class="name">Bottom</div>
+					<div class="frames"></div>
+				</div>
+			</div>
+			<div class="palette hidden if phone transparent">
+				<div class="color" data-color="ffff"></div>
+				<div class="current-colors">
+					<div class="color" data-color="b8a6"></div>
+					<div class="color" data-color="494b"></div>
+					<div class="color" data-color="f661"></div>
+					<div class="color" data-color="7e0a"></div>
+					<div class="color" data-color="35f4"></div>
+					<div class="color" data-color="9785"></div>
+					<div class="color" data-color="49fd"></div>
+				</div>
+				<div class="add-colors"></div>
+				<div class="add"></div>
+				<div class="color" data-color="0000"></div>
+			</div>
 		</div>
 	</main>
 
 	<script src="/js/xhr.js"></script>
+
+	<script src="/js/arkas/arka.js"></script>
 	<script src="/js/arkas/noise.js"></script>
+	<script src="/js/arkas/standby.js"></script>
+	<script src="/js/arkas/torrent.js"></script>
+
 	<script src="/js/dashboard.js"></script>
 </body>
 </html>

@@ -22,11 +22,12 @@ module.exports = (LIT) => {
 			// client.destroy()
 		})
 		.on("close", () => {
-			console.log("C: CLOSED, RECONNECT IN " + reconnectDelay + "ms...")
-
 			client = null
-			if(reconnectDelay < 60000) reconnectDelay = parseInt(reconnectDelay * 1.5, 10)
-			else reconnectDelay = 60000
+			reconnectDelay = parseInt(reconnectDelay * 1.5, 10)
+			
+			if(reconnectDelay > 60000) reconnectDelay = 60000
+
+			console.log("C: CLOSED, RECONNECT IN " + reconnectDelay + "ms...")
 
 			clearTimeout(reconnect)
 			reconnect = setTimeout(connect, reconnectDelay)

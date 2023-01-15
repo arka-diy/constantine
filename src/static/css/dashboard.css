@@ -2,21 +2,53 @@
 	box-sizing: border-box;
 	font-family: 'JetBrains Mono', sans-serif;
 	font-weight: 100;
+
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
+	display: none;
+}
+
+.transparent {
+	opacity: 0!important;
+
+	pointer-events: none!important;
+}
+
+.displaynone {
+	display: none!important;
 }
 
 body {
 	margin: 0;
 }
 
-img {
-	margin: 18px 18px 12px 18px;
+header {
+	position: fixed;
+
+	transition: all 0.2s;
 }
 
-nav {
+header.dimmed {
+	opacity: 0.1;
+
+	pointer-events: none!important;
+}
+
+header img.logo {
+	margin: 18px 18px 12px 18px;
+
+	width: 120px;
+	height: 120px;
+}
+
+header nav {
 	margin: 0 18px 36px 18px;
 }
 
-nav a {
+header nav a {
 	display: inline-block;
 	text-decoration: none;
 
@@ -25,28 +57,51 @@ nav a {
 
 	margin-top: 6px;
 	padding: 4px 6px;
+
+	border: 1px solid black;
 }
 
-nav a:hover {
+header nav a:hover {
 	color: #ddd;
 }
 
-nav a.outlined {
-	border: 1px solid black;
-
+header nav a.outlined {
 	background-color: white;
 	color: black;
 }
 
-nav a.outlined:hover {
+header nav a.outlined:hover {
 	color: #777;
 }
 
+.draw-close {
+	position: fixed;
+
+	top: 16px;
+	right: 16px;
+
+	transition: all 0.2s;
+}
+
+.draw-close .button {
+	display: inline-block;
+
+	font-size: 18px;
+
+	cursor: pointer;
+}
+
+.draw-close .button:active {
+	color: #555;
+}
+
 main {
-	position: relative;
+	position: absolute;
+
+	bottom: 0;
 
 	width: 100%;
-	height: 540px;
+	height: 640px;
 }
 
 main .arka {
@@ -54,7 +109,7 @@ main .arka {
 	top: 50%;
 	left: 50%;
 
-	margin-top: -200px;
+	margin-top: -220px;
 	margin-left: -130px;
 
 	width: 260px;
@@ -68,7 +123,7 @@ main .arka {
 }
 
 main.x1 .arka {
-	margin-top: -135px;
+	margin-top: -155px;
 	margin-left: -65px;
 
 	width: 130px;
@@ -78,7 +133,7 @@ main.x1 .arka {
 }
 
 main.x3 .arka {
-	margin-top: -265px;
+	margin-top: -285px;
 	margin-left: -195px;
 
 	width: 390px;
@@ -87,7 +142,7 @@ main.x3 .arka {
 	border-radius: 20px;
 }
 
-main #screen {
+main .screen {
 	position: relative;
 	top: 10px;
 	left: 10px;
@@ -100,7 +155,7 @@ main #screen {
 	transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-main.x1 #screen {
+main.x1 .screen {
 	position: relative;
 	top: 5px;
 	left: 5px;
@@ -109,7 +164,7 @@ main.x1 #screen {
 	height: 120px;
 }
 
-main.x3 #screen {
+main.x3 .screen {
 	position: relative;
 	top: 15px;
 	left: 15px;
@@ -118,7 +173,7 @@ main.x3 #screen {
 	height: 360px;
 }
 
-main #screen canvas {
+main .screen canvas {
 	position: relative;
 	top: -1px;
 	left: -1px;
@@ -126,31 +181,33 @@ main #screen canvas {
 	transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-main.x1 #screen canvas {
+main.x1 .screen canvas {
 	top: -0.5px;
 	left: -0.5px;
 }
 
-main.x3 #screen canvas {
+main.x3 .screen canvas {
 	top: -2px;
 	left: -2px;
 }
 
-main .magnifier {
-	position: absolute;
-	top: 50%;
+main .panel {
+	position: fixed;
+
+	bottom: 10px;
 	left: 50%;
 
-	margin-top: 140px;
 	margin-left: -130px;
+}
 
+main .panel .magnifier {
 	width: 260px;
-	height: 70px;
+	height: 40px;
 
 	text-align: center;
 }
 
-main .magnifier .button {
+main .panel .magnifier .button {
 	display: inline-block;
 
 	padding-top: 6px;
@@ -170,12 +227,12 @@ main .magnifier .button {
 	transform: scale(0.95);
 }
 
-main .magnifier .button:hover {
+main .panel .magnifier .button:hover {
 	border-color: #aaa;
 	color: #aaa;
 }
 
-main .magnifier .button.active {
+main .panel .magnifier .button.active {
 	border-color: #222;
 	color: #222;
 
@@ -187,20 +244,14 @@ main .magnifier .button.active {
 	transform: scale(1);
 }
 
-main .info {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-
-	margin-top: 170px;
-	margin-left: -130px;
-
-	width: 260px;
-
+main .panel .info {
+	width: 100%;
 	text-align: center;
+
+	transition: all 0.2s;
 }
 
-main .info .title h1 {
+main .panel .info .title h1 {
 	display: inline-block;
 
 	margin-top: 16px;
@@ -209,7 +260,7 @@ main .info .title h1 {
 	font-weight: 700;
 }
 
-main .info .title .preview.button {
+main .panel .info .title .button {
 	display: inline-block;
 
 	position: relative;
@@ -231,41 +282,395 @@ main .info .title .preview.button {
 	transition: all 0.2s;
 }
 
-main .info .title .preview.button:active {
+main .panel .info .title .button:active {
 	background-color: black;
 	color: white;
 }
 
-main .info h3 {
+main .panel .info h3 {
 	margin-top: 0;
 	margin-bottom: 20px;
 
 	font-size: 14px;
 }
 
-main .info .description {
+main .panel .info .description {
 	margin-bottom: 24px;
 
 	font-size: 11px;
 	font-style: italic;
 }
 
+main .panel .timeline {
+	position: absolute;
+	bottom: 25px;
+	left: 50%;
+
+	width: 411px;
+
+	margin-left: -206px;
+
+	color: #ccc;
+
+	transition: all 0.2s;
+}
+
+main .panel .timeline .header {
+	background-color: #f9f9f9;
+
+	height: 22px;
+
+	border-radius: 4px;
+}
+
+main .panel .timeline .layer {
+	height: 22px;
+}
+
+main .panel .timeline .name {
+	display: inline-block;
+	position: relative;
+
+	top: -6px;
+
+	width: 100px;
+
+	font-size: 11px;
+	font-weight: 300;
+	text-align: right;
+	color: #555;
+}
+
+main .panel .timeline .frames {
+	display: inline-block;
+
+	height: 22px;
+}
+
+main .panel .timeline .frames .frame {
+	display: inline-block;
+
+	width: 10px;
+	height: 22px;
+
+	border: 1px solid;
+	border-right: none;
+	border-top: none;
+}
+
+main .panel .timeline .frames .frame:last-of-type {
+	width: 11px;
+
+	border-right: 1px solid;
+}
+
+main .panel .timeline .frames .frame.empty {
+	
+}
+
+main .panel .timeline .frames .frame.filled {
+	
+}
+
+main .panel .timeline .header .frames {
+	height: 4px;
+}
+
+main .panel .timeline .header .frames .frame {
+	position: relative;
+
+	top: 6px;
+
+	height: 4px;
+}
+
+main .panel .timeline .header .frames .frame:nth-of-type(5):after {
+	content: "5";
+
+	position: absolute;
+	top: -8px;
+	left: -1px;
+
+	width: 10px;
+
+	font-size: 6px;
+	font-weight: 700;
+	text-align: center;
+}
+
+main .panel .timeline .header .frames .frame:nth-of-type(10):after {
+	content: "10";
+
+	position: absolute;
+	top: -8px;
+	left: -1px;
+
+	width: 10px;
+
+	font-size: 6px;
+	font-weight: 700;
+	text-align: center;
+}
+
+main .panel .timeline .header .frames .frame:nth-of-type(15):after {
+	content: "15";
+
+	position: absolute;
+	top: -8px;
+	left: -1px;
+
+	width: 10px;
+
+	font-size: 6px;
+	font-weight: 700;
+	text-align: center;
+}
+
+main .panel .timeline .header .frames .frame:nth-of-type(20):after {
+	content: "20";
+
+	position: absolute;
+	top: -8px;
+	left: -1px;
+
+	width: 10px;
+
+	font-size: 6px;
+	font-weight: 700;
+	text-align: center;
+}
+
+main .panel .timeline .header .frames .frame:nth-of-type(25):after {
+	content: "25";
+
+	position: absolute;
+	top: -8px;
+	left: -1px;
+
+	width: 10px;
+
+	font-size: 6px;
+	font-weight: 700;
+	text-align: center;
+}
+
+main .panel .timeline .header .frames .frame:nth-of-type(30):after {
+	content: "30";
+
+	position: absolute;
+	top: -8px;
+	left: -1px;
+
+	width: 10px;
+
+	font-size: 6px;
+	font-weight: 700;
+	text-align: center;
+}
+
+main .panel .timeline .layer .frames .frame {
+	cursor: pointer;
+}
+
+main .panel .timeline .layer .frames .frame:hover {
+	background-color: #f8f8f8;
+}
+
+main .panel .timeline .layer .frames .frame:nth-of-type(5) {
+	background-color: #eee;
+}
+
+main .panel .timeline .layer .frames .frame:nth-of-type(10) {
+	background-color: #eee;
+}
+
+main .panel .timeline .layer .frames .frame:nth-of-type(15) {
+	background-color: #eee;
+}
+
+main .panel .timeline .layer .frames .frame:nth-of-type(20) {
+	background-color: #eee;
+}
+
+main .panel .timeline .layer .frames .frame:nth-of-type(25) {
+	background-color: #eee;
+}
+
+main .panel .timeline .layer .frames .frame:nth-of-type(30) {
+	background-color: #eee;
+}
+
+main .panel .timeline .layer .frames .frame:active {
+	background-color: #ddd;
+}
+
+main .panel .palette {
+	overflow: hidden;
+
+	position: fixed;
+	top: 50%;
+	right: 32px;
+
+	width: 30px;
+	height: 300px;
+
+	margin-top: -150px;
+
+	border-radius: 10px;
+
+	box-shadow: 0px 4px 15px -3px rgba(0, 0, 0, 0.25);
+
+	transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+main .panel .palette.add {
+	height: 390px;
+
+	margin-top: -195px;
+}
+
+main .panel .palette .add {
+	position: relative;
+
+	width: 30px;
+	height: 30px;
+
+	font-size: 23px;
+	font-weight: 300;
+
+	text-align: center;
+}
+
+main .panel .palette .add:after {
+	content: "";
+	
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	width: 30px;
+	height: 30px;
+
+	background-image: url("/images/add.svg");
+	background-size: 60%;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+main .panel .palette.add .add:after {
+	content: "";
+	
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	width: 30px;
+	height: 30px;
+
+	background-image: url("/images/refresh.svg");
+	background-size: 60%;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+main .panel .palette .color {
+	width: 30px;
+	height: 30px;
+}
+
+main .panel .palette .color, main .panel .palette .add {
+	cursor: pointer;
+}
+
+main .panel .palette .color:hover, main .panel .palette .add:hover {
+	border: 2px solid;
+}
+
+main .panel .palette .color:active, main .panel .palette .add:active {
+	border: 4px solid;
+}
+
+main .panel .palette .add:hover:after {
+	top: -2px;
+	left: -2px;
+}
+
+main .panel .palette .add:active:after {
+	top: -4px;
+	left: -4px;
+}
+
+main .panel .palette > .color:first-of-type:hover {
+	border-radius: 10px 10px 0 0;
+}
+
+main .panel .palette > .color:last-of-type:hover {
+	color: white;
+	border-radius: 0 0 10px 10px;
+}
+
+#slider {
+	height: 640px;
+}
+
+#slider .slide {
+	position: relative;
+	float: left;
+	height: 640px;
+}
+
+#edit {
+	padding-top: 3px;
+}
+
+#draw-save {
+	font-weight: 700;
+}
+
 @media only screen and (max-width: 640px) {
 
+	header img.logo {
+		width: 80px;
+		height: 80px;
+	}
+
+	header nav {
+		float: right;
+
+		width: calc(100% - 152px);
+
+		margin-top: 20px;
+	}
+
+	header nav a {
+		font-size: 15px;
+	}
+
 	.hidden.if.phone {
-		display: none;
+		display: none!important;
 	}
 
-	main {
-		height: 400px;
+	main .arka {
+		margin-top: -150px;
 	}
 
-	main .magnifier {
-		margin-top: 90px;
+	main.x1 .arka {
+		margin-top: -100px;
 	}
 
-	main .info {
-		margin-top: 120px;
+	main .panel {
+		bottom: 0;
+	}
+}
+
+@media only screen and (max-width: 374px) {
+
+	main .arka {
+		margin-top: -130px;
+	}
+
+	main.x1 .arka {
+		margin-top: -80px;
 	}
 
 }
