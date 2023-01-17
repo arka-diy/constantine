@@ -124,6 +124,8 @@ function resetScreen() {
 }
 
 function renderScreen(drawFrame) {
+	console.log("S", drawFrame[0][0]);
+
 	var drawing = drawFrame ? true : false;
 	drawFrame = drawFrame || context.screen.frames[context.screen.frame];
 

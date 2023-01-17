@@ -1,3 +1,26 @@
+function painterClear() {
+	context.painter.frame = [];
+
+	for (var i = 0; i < 24; i++) {
+		context.painter.frame.push([]);
+		for (var j = 0; j < 24; j++) {
+			context.painter.frame[i].push("0000");
+		}
+	}
+
+	renderScreen(context.painter.frame);
+}
+
+function painterPaletteAddColor() {
+	if(!context.UI.paletteView.classList.contains("add")) {
+		context.UI.paletteView.classList.add("add");
+	}
+	
+	paletteRefreshPainter();
+}
+
+// Internal
+
 function initPainter() {
 	context.painter.active = true;
 
@@ -27,29 +50,6 @@ function initPalette() {
 
 	paletteUpdatePainter();
 }
-
-function painterClear() {
-	context.painter.frame = [];
-
-	for (var i = 0; i < 24; i++) {
-		context.painter.frame.push([]);
-		for (var j = 0; j < 24; j++) {
-			context.painter.frame[i].push("0000");
-		}
-	}
-
-	renderScreen(context.painter.frame);
-}
-
-function painterPaletteAddColor() {
-	if(!context.UI.paletteView.classList.contains("add")) {
-		context.UI.paletteView.classList.add("add");
-	}
-	
-	paletteRefreshPainter();
-}
-
-// Internal
 
 function startDrawingPainter(event) {
 	if(!context.painter.active) return;
@@ -88,6 +88,8 @@ function drawPainter(x, y) {
 
 	context.painter.x = newX;
 	context.painter.y = newY;
+
+	saveFrameAnimator();
 }
 
 function drawPixelPainter(x, y) {

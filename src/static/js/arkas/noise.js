@@ -12,7 +12,7 @@ function loadNoiseArka() {
 				var line = [];
 				for (var j = 0; j < 24; j++) {
 					const random = Math.random();
-					line.push(random < 0.75 ? (random < 0.5 ? (random < 0.25 ? "ffff" : "cccc") : "9999") : "0000");
+					line.push(random < 0.75 ? (random < 0.5 ? (random < 0.25 ? "ffff" : convert24to16("cccccc")) : convert24to16("999999")) : "0000");
 				}
 				matrix.push(line);
 			}

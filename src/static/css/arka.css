@@ -151,7 +151,7 @@ main .panel .info {
 	width: 100%;
 	text-align: center;
 
-	transition: all 0.2s;
+	transition: opacity 0.2s;
 }
 
 main .panel .info .title h1 {
@@ -182,7 +182,7 @@ main .panel .info .title .button {
 
 	cursor: pointer;
 
-	transition: all 0.2s;
+	transition: opacity 0.2s;
 }
 
 main .panel .info .edit {
@@ -222,7 +222,7 @@ main .panel .timeline {
 
 	color: #ccc;
 
-	transition: all 0.2s;
+	transition: opacity 0.2s;
 }
 
 main .panel .timeline .header {
@@ -231,6 +231,10 @@ main .panel .timeline .header {
 	height: 22px;
 
 	border-radius: 4px;
+}
+
+main .panel .timeline .header .frame {
+	border-top: none!important;
 }
 
 main .panel .timeline .layer {
@@ -263,23 +267,31 @@ main .panel .timeline .frames .frame {
 	width: 10px;
 	height: 22px;
 
-	border: 1px solid;
-	border-right: none;
-	border-top: none;
+	border-top: 1px solid;
+}
+
+main .panel .timeline .header .frames .frame {
+	border-left: 1px solid;
+}
+
+main .panel .timeline .bottom .frames .frame {
+	border-bottom: 1px solid;
+}
+
+main .panel .timeline .bottom .frames .frame.key, main .panel .timeline .bottom .frames .frame.between, main .panel .timeline .bottom .frames .frame.cut {
+	border-bottom: 1px solid #555;
+}
+
+main .panel .timeline .frames .frame.between, main .panel .timeline .frames .frame.cut {
+	border-left: none!important;
+}
+
+main .panel .timeline .frames .frame:first-of-type {
+	border-left: 1px solid;
 }
 
 main .panel .timeline .frames .frame:last-of-type {
 	width: 11px;
-
-	border-right: 1px solid;
-}
-
-main .panel .timeline .frames .frame.empty {
-	
-}
-
-main .panel .timeline .frames .frame.filled {
-	
 }
 
 main .panel .timeline .header .frames {
@@ -291,7 +303,7 @@ main .panel .timeline .header .frames .frame {
 
 	top: 6px;
 
-	height: 4px;
+	height: 3px;
 }
 
 main .panel .timeline .header .frames .frame:nth-of-type(5):after {
@@ -379,11 +391,17 @@ main .panel .timeline .header .frames .frame:nth-of-type(30):after {
 }
 
 main .panel .timeline .layer .frames .frame {
+	border-left: 1px solid;
+
 	cursor: pointer;
 }
 
 main .panel .timeline .layer .frames .frame:hover {
 	background-color: #f8f8f8;
+}
+
+main .panel .timeline .layer .frames .frame.key:hover, main .panel .timeline .layer .frames .frame.between:hover, main .panel .timeline .layer .frames .frame.cut:hover {
+	background-color: #d8d8d8;
 }
 
 main .panel .timeline .layer .frames .frame:nth-of-type(5) {
@@ -410,8 +428,121 @@ main .panel .timeline .layer .frames .frame:nth-of-type(30) {
 	background-color: #eee;
 }
 
+main .panel .timeline .layer .frames .frame.key, main .panel .timeline .layer .frames .frame.between, main .panel .timeline .layer .frames .frame.cut {
+	position: relative;
+
+	background-color: #ddd;
+}
+
+main .panel .timeline .layer .frames .frame.key.empty, main .panel .timeline .layer .frames .frame.between.empty, main .panel .timeline .layer .frames .frame.cut.empty {
+	background-color: #fff;
+}
+
+main .panel .timeline .layer .frames .frame.key {
+	border-top: 1px solid #555;
+	border-left: 1px solid #555;
+}
+
+main .panel .timeline .layer .frames .frame.between, main .panel .timeline .layer .frames .frame.cut, main .panel .timeline .layer .frames .frame.top:not(.key):not(.between):not(.cut) {
+	border-top: 1px solid #555;
+}
+
+.cut + .frame, .key + .frame:not(.between):not(.cut) {
+	border-left: 1px solid #555!important;
+}
+
+main .panel .timeline .layer .frames .frame:last-of-type.key, main .panel .timeline .layer .frames .frame:last-of-type.cut {
+	border-right: 1px solid #555;
+}
+
+main .panel .timeline .layer .frames .frame.key:after {
+	content: "●";
+
+	position: absolute;
+
+	width: 100%;
+	height: 100%;
+
+	padding-top: 9px;
+
+	font-size: 8px;
+	text-align: center;
+
+	color: #555;
+}
+
+main .panel .timeline .layer .frames .frame.key.empty:after {
+	content: "○";
+}
+
+main .panel .timeline .layer .frames .frame.cut:after {
+	content: "🀆";
+
+	position: absolute;
+
+	width: 100%;
+	height: 100%;
+
+	padding-top: 9px;
+
+	font-size: 8px;
+	text-align: center;
+
+	color: #555;
+}
+
 main .panel .timeline .layer .frames .frame:active {
 	background-color: #ddd;
+}
+
+main .panel .timeline .layer .frames .frame.key:active, main .panel .timeline .layer .frames .frame.between:active, main .panel .timeline .layer .frames .frame.cut:active {
+	background-color: #ccc;
+}
+
+main .panel .timeline .frames .frame.selected {
+	background-color: #6b59bdbb!important;
+}
+
+main .panel .timeline .frames .frame.contexted {
+	background-color: #6b59bd!important;
+}
+
+main .panel .timeline .frames .frame.contexted:after, main .panel .timeline .frames .frame.selected:after {
+	color: white!important;
+}
+
+main .panel .timeline .menu {
+	overflow: hidden;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	background-color: #ddd;
+
+	border: 1px outset;
+	border-radius: 4px;
+
+	transition: opacity 0.1s;
+}
+
+main .panel .timeline .menu .item {
+	padding: 4px 10px;
+
+	color: black;
+
+	font-size: 12px;
+	font-weight: 300;
+
+	white-space: nowrap;
+
+	cursor: pointer;
+}
+
+main .panel .timeline .menu .item:hover {
+	background-color: #6B59BD;
+
+	color: white;
 }
 
 main .toolbar {
@@ -422,7 +553,7 @@ main .toolbar {
 	-ms-transform: translateY(-50%);
 	transform: translateY(-50%);
 
-	transition: all 0.2s;
+	transition: opacity 0.2s;
 }
 
 main .toolbar > div {
@@ -632,7 +763,7 @@ main .slider .slide {
 	top: 16px;
 	right: 16px;
 
-	transition: all 0.2s;
+	transition: opacity 0.2s;
 }
 
 .draw-corner-panel .button {
@@ -688,7 +819,7 @@ main .slider .slide {
 	backdrop-filter: blur(20px) saturate(160%) contrast(45%) brightness(140%);
 	-webkit-backdrop-filter: blur(20px) saturate(160%) contrast(45%) brightness(140%);
 
-	transition: all 0.2s;
+	transition: opacity 0.2s;
 }
 
 .draw-sharer .text {

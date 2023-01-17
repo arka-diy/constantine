@@ -1,3 +1,5 @@
+// Internal
+
 function initSlider() {
 	context.slider.slides = context.UI.sliderView.children;
 

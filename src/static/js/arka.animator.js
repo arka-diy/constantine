@@ -1,13 +1,3 @@
-function initAnimator() {
-	var framesHTML = "";
-	for (var i = 0; i < 30; i++) {
-		framesHTML += '<div class="frame"></div>';
-	}
-	document.querySelectorAll("main .panel .timeline .frames").forEach(frames => {
-		frames.innerHTML = framesHTML;
-	});
-}
-
 function animatorOpen() {
 	initAnimator();
 	initPainter();
@@ -56,5 +46,303 @@ function animatorShareCopy() {
 	navigator.clipboard.writeText(context.UI.sharerTextView.innerText);
 }
 
+function animatorInsertFrame(keyframe) {
+	keyframe = keyframe === true ? true : false;
+
+	closeMenuAnimator();
+
+	var frameView = context.UI.timelineFrameView;
+	var index = Array.prototype.indexOf.call(frameView.parentElement.children, frameView);
+	var frames = context.animator.layers[getFrameLayerAnimator(frameView)];
+
+	var action;
+
+	for (var i = 0; i < frames.length; i++) {
+		if(frames[i].index > index) {
+			var previous = frames[i - 1] ? frames[i - 1].type : null;
+			var current = frames[i].type;
+
+			if(previous === null && current === "key") action = "keyframe";
+			if(previous === "key" && current === "cut") action = frameView.parentElement.children[index - 1].classList.contains("key") ? "keyframe" : "cut+keyframe";
+
+			break
+		} 
+	}
+
+	if(!action) action = keyframe ? "keyframe" : (frames[i - 1] && frames[i - 1].type === "cut" ? "movecut" : "cut");
+
+	console.log(action);
+
+	switch(action) {
+	case "keyframe":
+
+		break
+	case "cut":
+
+		break
+	case "cut+keyframe":
+
+		break
+	case "movecut":
+
+		break
+	}
+}
+
+function animatorInsertKeyframe() {
+	animatorInsertFrame(true);
+}
+
+function animatorRemoveFrame() {
+	closeMenuAnimator();
+
+	var frameView = context.UI.timelineFrameView;
+	var index = Array.prototype.indexOf.call(frameView.parentElement.children, frameView);
+	var frames = context.animator.layers[getFrameLayerAnimator(frameView)];
+
+	var action;
+
+	for (var i = 0; i < frames.length; i++) {
+		if(frames[i].index >= index) {
+			var previous = frames[i - 1] ? frames[i - 1] : null;
+			var current = frames[i];
+			var next = frames[i + 1] ? frames[i + 1] : null;
+
+			if(current.type === "key") {
+				action = next && next.type === "cut" ? "movekeyframeright" : "removekeyframe";
+				if(action === "movekeyframeright" && (next.index - 1) === index) action = "removecutright+movekeyframeright";
+			}
+
+			if(current.type === "cut") {
+				action = previous && previous.type === "key" && (previous.index + 1) === index ? "removecut" : "movecutleft";
+				if(current.index !== index) action = previous && previous.type === "key" && (previous.index + 1) === index ? "keyframeright" : "cutleft+keyframeright";
+			}
+
+			break
+		}
+	}
+
+	console.log(action);
+
+	switch(action) {
+	case "movekeyframeright":
+
+		break
+	case "removekeyframe":
+
+		break
+	case "removecutright+movekeyframeright":
+
+		break
+	case "removecut":
+
+		break
+	case "movecutleft":
+
+		break
+	case "keyframeright":
+
+		break
+	case "cutleft+keyframeright":
+
+		break
+	}
+}
+
 // Internal
 
+function initAnimator() {
+	document.querySelectorAll("main .panel .timeline .frames").forEach(framesView => {
+		for (var i = 0; i < 30; i++) {
+			var frameView = document.createElement("div");
+			frameView.classList.add("frame");
+
+			if(framesView.parentElement.classList.contains("layer")) {
+				frameView.addEventListener("contextmenu", openMenuAnimator);
+
+				frameView.addEventListener("touchstart", frameDownAnimator);
+				frameView.addEventListener("touchend", frameUpAnimator);
+				frameView.addEventListener("touchcancel", frameUpAnimator);
+				frameView.addEventListener("mousedown", frameDownAnimator);
+				frameView.addEventListener("mouseup", frameUpAnimator);
+			}
+			
+			framesView.appendChild(frameView);
+		}
+	});
+
+	redrawTimelineAnimator();
+}
+
+function redrawTimelineAnimator() {
+	document.querySelectorAll("main .panel .timeline .frame").forEach((frameView) => {
+		frameView.classList.remove("key");
+		frameView.classList.remove("between");
+		frameView.classList.remove("cut");
+		frameView.classList.remove("empty");
+		frameView.classList.remove("top");
+		frameView.classList.remove("selected");
+	});
+
+	["top", "middle", "bottom"].forEach((layer) => {
+		var frames = document.querySelectorAll("main .panel .timeline .layer." + layer + " .frame");
+		var between = false;
+		var empty = false;
+		var selected = false;
+
+		for (var i = 0; i < frames.length; i++) {
+			var frameView = frames[i];
+
+			if(layer === context.animator.selectedLayer && i === context.animator.selectedIndex) {
+				selected = true;
+
+				frameView.classList.add("selected");
+			} else {
+				if(selected) frameView.classList.add("selected");
+			}
+
+			var frame = context.animator.layers[layer].filter(frame => { return frame.index === Array.prototype.indexOf.call(frameView.parentElement.children, frameView) })[0];
+			if(frame) {
+				frameView.classList.add(frame.type);
+
+				if(layer === context.animator.selectedLayer && i === context.animator.selectedIndex) {
+					if(frame.frame) renderScreen(frame.frame);
+
+					console.log(frame.frame);
+				}
+
+				if(frame.empty || (frame.type === "cut" && empty)) frameView.classList.add("empty");
+
+				if(between) {
+					between = false;
+					selected = false;
+				} else {
+					var nextIndex = context.animator.layers[layer].indexOf(frame) + 1;
+					var nextFrame = context.animator.layers[layer][nextIndex];
+					if(nextFrame && nextFrame.type === "cut") {
+						between = true;
+						empty = frame.empty || false;
+					} else {
+						selected = false;
+					}
+				}
+			} else {
+				if(between) {
+					frameView.classList.add("between");
+					if(empty) frameView.classList.add("empty");
+				} else {
+					between = false;
+					selected = false;
+
+					frameView.classList.remove("selected");
+				}
+			}
+		}
+	});
+
+	document.querySelectorAll("main .panel .timeline .layer:not(.top) .frame:not(.key):not(.between):not(.cut)").forEach((frameView) => {
+		var index = Array.prototype.indexOf.call(frameView.parentElement.children, frameView);
+		var layer = frameView.parentElement.parentElement.classList.contains("middle") ? "top" : "middle";
+
+		var classList = document.querySelector("main .panel .timeline ." + layer + " .frames .frame:nth-of-type(" + (index + 1) + ")").classList;
+
+		if(classList.contains("key") || classList.contains("between") || classList.contains("cut")) frameView.classList.add("top");
+	});
+}
+
+function frameDownAnimator(event) {
+	closeMenuAnimator();
+	frameUpAnimator();
+
+	frameSelectAnimator(event.target);
+
+	context.animator.menuTimer = setTimeout(() => {
+		openMenuAnimator(null, event.target);
+	}, 500);
+}
+
+function frameUpAnimator() {
+	if(context.animator.menuTimer) clearTimeout(context.animator.menuTimer);
+}
+
+function frameSelectAnimator(frameView) {
+	if(!frameView.classList.contains("key") && !frameView.classList.contains("between") && !frameView.classList.contains("cut")) return;
+
+	var index = Array.prototype.indexOf.call(frameView.parentElement.children, frameView);
+	var existing = -1;
+
+	for (var i = index; i >= 0; i--) {
+		if(frameView.parentElement.children[i].classList.contains("key")) {
+			existing = i;
+			break;
+		}
+	}
+
+	if(existing >= 0) {
+		context.animator.selectedIndex = existing;
+		context.animator.selectedLayer = getFrameLayerAnimator(frameView);
+
+		redrawTimelineAnimator();
+	}
+}
+
+function getFrameLayerAnimator(frameView) {
+	if(frameView.parentElement.parentElement.classList.contains("top")) {
+		return "top";
+	} else if(frameView.parentElement.parentElement.classList.contains("middle")) {
+		return "middle";
+	} else if(frameView.parentElement.parentElement.classList.contains("bottom")) {
+		return "bottom";
+	}
+}
+
+function openMenuAnimator(event, target) {
+	context.UI.timelineFrameView = target || event.target;
+
+	if(event) event.preventDefault();
+	closeMenuAnimator();
+
+	var timelineViewBounds = context.UI.timelineView.getBoundingClientRect();
+	var frameBounds = context.UI.timelineFrameView.getBoundingClientRect();
+
+	var classList = context.UI.timelineFrameView.classList;
+
+	if(classList.contains("key")) {
+		context.UI.animatorInsertKeyframeButton.classList.add("displaynone");
+		context.UI.animatorInsertFrameButton.classList.add("displaynone");
+	} else {
+		context.UI.animatorInsertKeyframeButton.classList.remove("displaynone");
+		context.UI.animatorInsertFrameButton.classList.remove("displaynone");
+	}
+
+	if(classList.contains("between") || classList.contains("cut")) context.UI.animatorInsertFrameButton.classList.add("displaynone");
+	else if(!classList.contains("key")) context.UI.animatorInsertFrameButton.classList.remove("displaynone");
+
+	if(classList.contains("key") || classList.contains("between") || classList.contains("cut")) context.UI.animatorRemoveFrameButton.classList.remove("displaynone");
+	else context.UI.animatorRemoveFrameButton.classList.add("displaynone");
+
+	context.UI.timelineFrameView.classList.add("contexted");
+
+	context.UI.timelineMenuView.classList.remove("transparent");
+	context.UI.timelineMenuView.style.left = (frameBounds.right - timelineViewBounds.left - 8) + "px";
+	context.UI.timelineMenuView.style.top = (frameBounds.bottom - timelineViewBounds.top - 8) + "px";
+}
+
+function closeMenuAnimator() {
+	context.UI.timelineMenuView.classList.add("transparent");
+
+	document.querySelectorAll("main .panel .timeline .frame.contexted").forEach((contexted) => {
+		contexted.classList.remove("contexted");
+	});
+}
+
+function saveFrameAnimator() {
+	var frames = context.animator.layers[context.animator.selectedLayer];
+	var frameIndex = frames.findIndex((frame) => { return frame.index === context.animator.selectedIndex });
+
+	if(frameIndex >= 0) {
+		context.animator.layers[context.animator.selectedLayer][frameIndex].frame = context.painter.frame;
+	}
+
+	console.log(context.animator.layers[context.animator.selectedLayer][frameIndex]);
+}
