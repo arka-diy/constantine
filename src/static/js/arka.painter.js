@@ -1,12 +1,5 @@
 function painterClear() {
-	context.painter.frame = [];
-
-	for (var i = 0; i < 24; i++) {
-		context.painter.frame.push([]);
-		for (var j = 0; j < 24; j++) {
-			context.painter.frame[i].push("0000");
-		}
-	}
+	context.painter.frame = makeEmptyFramePainter();
 
 	renderScreen(context.painter.frame);
 }
@@ -49,6 +42,29 @@ function initPalette() {
 	}
 
 	paletteUpdatePainter();
+}
+
+function makeEmptyFramePainter() {
+	var frame = [];
+
+	for (var i = 0; i < 24; i++) {
+		frame.push([]);
+		for (var j = 0; j < 24; j++) {
+			frame[i].push("0000");
+		}
+	}
+
+	return frame;
+}
+
+function checkEmptyFramePainter(frame) {
+	for (var i = 0; i < frame.length; i++) {
+		for (var j = 0; j < frame[i].length; j++) {
+			if(frame[i][j] !== "0000") return false;
+		}
+	}
+
+	return true;
 }
 
 function startDrawingPainter(event) {
@@ -189,7 +205,7 @@ function pickColorPainter() {
 		context.UI.paletteView.classList.remove("add");
 	}
 
-	if(context.painter.color === "0000" || context.painter.color === "ffff") return updatePalette();
+	if(context.painter.color === "0000" || context.painter.color === "ffff") return paletteUpdatePainter();
 
 	var existing = -1;
 	var savedPalette = [];

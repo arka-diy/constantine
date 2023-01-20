@@ -65,15 +65,9 @@ var context = {
 
 	animator: {
 		menuTimer: null,
-
-		layers: {
-			top: [{ index: 0, type: "key" }, { index: 5, type: "cut" }],
-			middle: [{ index: 5, type: "key" }, { index: 8, type: "cut" }, { index: 9, type: "key" }, { index: 10, type: "cut" }],
-			bottom: [{ index: 5, type: "key" }, { index: 6, type: "key" }, { index: 7, type: "key" }, { index: 9, type: "key" }, { index: 29, type: "cut" }]
-		},
-
-		selectedLayer: "top",
-		selectedIndex: 0
+		layers: null,
+		selectedLayer: null,
+		selectedIndex: null
 	}
 
 }
@@ -103,4 +97,5 @@ document.querySelector(".draw-sharer .copy").addEventListener("click", animatorS
 // Init
 
 initSlider();
+initAnimator();
 screenLoad();

@@ -1,5 +1,6 @@
 function animatorOpen() {
-	initAnimator();
+	loadAnimator();
+
 	initPainter();
 	initPalette();
 
@@ -53,40 +54,50 @@ function animatorInsertFrame(keyframe) {
 
 	var frameView = context.UI.timelineFrameView;
 	var index = Array.prototype.indexOf.call(frameView.parentElement.children, frameView);
-	var frames = context.animator.layers[getFrameLayerAnimator(frameView)];
+	var layer = context.animator.layers[getFrameLayerAnimator(frameView)];
 
 	var action;
 
-	for (var i = 0; i < frames.length; i++) {
-		if(frames[i].index > index) {
-			var previous = frames[i - 1] ? frames[i - 1].type : null;
-			var current = frames[i].type;
+	for (var i = 0; i < layer.length; i++) {
+		if(layer[i].index >= index) {
+			var previous = layer[i - 1] ? layer[i - 1].type : null;
+			var current = layer[i].type;
 
 			if(previous === null && current === "key") action = "keyframe";
-			if(previous === "key" && current === "cut") action = frameView.parentElement.children[index - 1].classList.contains("key") ? "keyframe" : "cut+keyframe";
+			if(previous === "key" && current === "cut") action = frameView.parentElement.children[index - 1].classList.contains("key") ? (frameView.parentElement.children[index + 1].classList.contains("between") ? "keyframe" : "removecut+keyframe") : "cutleft+keyframe";
 
 			break
 		} 
 	}
 
-	if(!action) action = keyframe ? "keyframe" : (frames[i - 1] && frames[i - 1].type === "cut" ? "movecut" : "cut");
-
-	console.log(action);
+	if(!action && layer.length === 0) action = "keyframe";
+	if(!action) action = keyframe ? (!frameView.classList.contains("key") && !frameView.classList.contains("between") && !frameView.classList.contains("cut") ? "keyframe" : "movecutleft+keyframe") : (layer[i - 1] && layer[i - 1].type === "cut" ? "movecut" : "cut");
 
 	switch(action) {
 	case "keyframe":
-
+		layer.push({ index, type: "key", frame: makeEmptyFramePainter(), empty: true });
 		break
 	case "cut":
-
+		layer.push({ index, type: "cut" });
 		break
-	case "cut+keyframe":
-
+	case "cutleft+keyframe":
+		layer.push({ index: index-1, type: "cut" });
+		layer.push({ index, type: "key", frame: makeEmptyFramePainter(), empty: true });
+		break
+	case "removecut+keyframe":
+		layer.splice(layer.indexOf(layer[i]), 1);
+		layer.push({ index, type: "key", frame: makeEmptyFramePainter(), empty: true });
+		break
+	case "movecutleft+keyframe":
+		layer[i - 1].index -= 1;
+		layer.push({ index, type: "key", frame: makeEmptyFramePainter(), empty: true });
 		break
 	case "movecut":
-
+		layer[i - 1].index = index;
 		break
 	}
+
+	redrawTimelineAnimator();
 }
 
 function animatorInsertKeyframe() {
@@ -98,15 +109,15 @@ function animatorRemoveFrame() {
 
 	var frameView = context.UI.timelineFrameView;
 	var index = Array.prototype.indexOf.call(frameView.parentElement.children, frameView);
-	var frames = context.animator.layers[getFrameLayerAnimator(frameView)];
+	var layer = context.animator.layers[getFrameLayerAnimator(frameView)];
 
 	var action;
 
-	for (var i = 0; i < frames.length; i++) {
-		if(frames[i].index >= index) {
-			var previous = frames[i - 1] ? frames[i - 1] : null;
-			var current = frames[i];
-			var next = frames[i + 1] ? frames[i + 1] : null;
+	for (var i = 0; i < layer.length; i++) {
+		if(layer[i].index >= index) {
+			var previous = layer[i - 1] ? layer[i - 1] : null;
+			var current = layer[i];
+			var next = layer[i + 1] ? layer[i + 1] : null;
 
 			if(current.type === "key") {
 				action = next && next.type === "cut" ? "movekeyframeright" : "removekeyframe";
@@ -116,37 +127,42 @@ function animatorRemoveFrame() {
 			if(current.type === "cut") {
 				action = previous && previous.type === "key" && (previous.index + 1) === index ? "removecut" : "movecutleft";
 				if(current.index !== index) action = previous && previous.type === "key" && (previous.index + 1) === index ? "keyframeright" : "cutleft+keyframeright";
+				if(action === "cutleft+keyframeright") action = (current.index - 1) === index ? "removecutright+cutleft+keyframeright" : "cutleft+keyframeright";
 			}
 
 			break
 		}
 	}
 
-	console.log(action);
-
 	switch(action) {
 	case "movekeyframeright":
-
+		layer[i].index += 1;
 		break
 	case "removekeyframe":
-
+	case "removecut":
+		layer.splice(layer.indexOf(layer[i]), 1);
 		break
 	case "removecutright+movekeyframeright":
-
-		break
-	case "removecut":
-
+		layer.splice(layer.indexOf(layer[i]) + 1, 1);
+		layer[i].index += 1;
 		break
 	case "movecutleft":
-
+		layer[i].index -= 1;
 		break
 	case "keyframeright":
-
+		layer.push({ index: index + 1, type: "key", frame: JSON.parse(JSON.stringify(layer[i - 1].frame)), empty: checkEmptyFramePainter(layer[i - 1].frame) });
 		break
 	case "cutleft+keyframeright":
-
+		layer.push({ index: index - 1, type: "cut" });
+		layer.push({ index: index + 1, type: "key", frame: JSON.parse(JSON.stringify(layer[i - 1].frame)), empty: checkEmptyFramePainter(layer[i - 1].frame) });
 		break
+	case "removecutright+cutleft+keyframeright":
+		layer.splice(layer.indexOf(layer[i]), 1);
+		layer.push({ index: index - 1, type: "cut" });
+		layer.push({ index: index + 1, type: "key", frame: JSON.parse(JSON.stringify(layer[i - 1].frame)), empty: checkEmptyFramePainter(layer[i - 1].frame) });
 	}
+
+	redrawTimelineAnimator();
 }
 
 // Internal
@@ -170,11 +186,25 @@ function initAnimator() {
 			framesView.appendChild(frameView);
 		}
 	});
+}
+
+function loadAnimator() {
+	context.animator.layers = {
+		top: [{ index: 0, type: "key", empty: true, frame: JSON.parse(JSON.stringify(context.painter.frame)) }],
+		middle: [], bottom: []
+	};
+
+	context.animator.selectedLayer = "top";
+	context.animator.selectedIndex = 0;
 
 	redrawTimelineAnimator();
 }
 
 function redrawTimelineAnimator() {
+	context.animator.layers.top = context.animator.layers.top.sort((f1, f2) => { return f1.index > f2.index });
+	context.animator.layers.middle = context.animator.layers.middle.sort((f1, f2) => { return f1.index > f2.index });
+	context.animator.layers.bottom = context.animator.layers.bottom.sort((f1, f2) => { return f1.index > f2.index });
+
 	document.querySelectorAll("main .panel .timeline .frame").forEach((frameView) => {
 		frameView.classList.remove("key");
 		frameView.classList.remove("between");
@@ -186,6 +216,7 @@ function redrawTimelineAnimator() {
 
 	["top", "middle", "bottom"].forEach((layer) => {
 		var frames = document.querySelectorAll("main .panel .timeline .layer." + layer + " .frame");
+
 		var between = false;
 		var empty = false;
 		var selected = false;
@@ -206,9 +237,12 @@ function redrawTimelineAnimator() {
 				frameView.classList.add(frame.type);
 
 				if(layer === context.animator.selectedLayer && i === context.animator.selectedIndex) {
-					if(frame.frame) renderScreen(frame.frame);
-
-					console.log(frame.frame);
+					if(frame.frame) {
+						renderScreen(frame.frame);
+						context.painter.frame = frame.frame;
+					} else {
+						painterClear();
+					}
 				}
 
 				if(frame.empty || (frame.type === "cut" && empty)) frameView.classList.add("empty");
@@ -341,8 +375,9 @@ function saveFrameAnimator() {
 	var frameIndex = frames.findIndex((frame) => { return frame.index === context.animator.selectedIndex });
 
 	if(frameIndex >= 0) {
-		context.animator.layers[context.animator.selectedLayer][frameIndex].frame = context.painter.frame;
+		context.animator.layers[context.animator.selectedLayer][frameIndex].frame = JSON.parse(JSON.stringify(context.painter.frame));
+		context.animator.layers[context.animator.selectedLayer][frameIndex].empty = checkEmptyFramePainter(context.painter.frame);
 	}
 
-	console.log(context.animator.layers[context.animator.selectedLayer][frameIndex]);
+	redrawTimelineAnimator();
 }
