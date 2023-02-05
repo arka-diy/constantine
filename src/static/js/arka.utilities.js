@@ -54,6 +54,34 @@ function convert16to24(input) {
 	return "#" + RGB888.toString(16).padStart(6, "0");
 }
 
+function zip(frame) {
+	const shared = frame.type + ":" + frame.index;
+	return shared + (frame.frame ? (":" + frame.frame.map((line) => { return line.map((pixel) => { return pixel.toString() }).join("") }).join("")) : "");
+}
+
+function unzip(string) {
+	var split = string.split(":");
+
+	var frame = {
+		index: parseInt(split[1], 10),
+		type: split[0]
+	}
+
+	if(split.length > 2) {
+		var chunks = split[2].match(/.{1,4}/g);
+		if (chunks.length !== 576) {
+			console.error('Unexpected number of chunks');
+		} else {
+			frame.frame = [];
+			for (let i = 0; i < chunks.length; i += 24) {
+				frame.frame.push(chunks.slice(i, i + 24));
+			}
+		}
+	}
+
+	return frame;
+}
+
 var alphabet5px = {
 	"A": [[1,2],[0,3],[0,1,2,3],[0,3],[0,3]],
 	"B": [[0,1,2],[0,3],[0,1,2],[0,3],[0,1,2]], //?

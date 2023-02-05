@@ -54,11 +54,11 @@ module.exports = (LIT) => {
 
 	async function save(req, res) {
 		const { identificator, base, title } = req.body
-		var animations = req.body.animations
 
-		if(!animations) return res.status(401).send({ error: "animations_required" })
+		var rawAnimations = req.body.animations
+		if(!rawAnimations) return res.status(401).send({ error: "animations_required" })
 
-		// TODO: animations parse check + update/create + output array of objs/ids
+		// TODO: raw animations parse check
 
 		var arka
 
@@ -68,25 +68,37 @@ module.exports = (LIT) => {
 				const baseArka = await LIT.models.Arka.findOne({ identificator: base })
 				if(!baseArka) return res.status(403).send({ error: "base_arka_not_found" })
 
-				arka = new LIT.models.Arka({
+				var animations = []
+
+				// TODO: create animations
+
+				arka = new LIT.models.Arka.create({
 					identificator,
 					type: baseArka.type,
 					title: title || "Untitled",
 					author: baseArka.author, // TODO
 					description: baseArka.description, // TODO
 					editable: true,
-					animations: []
+					animations
 				})
 			} else {
-				arka = await LIT.models.Arka.findOne({ identificator })
+				arka = await LIT.models.Arka.findOne({ identificator }).populate("animations")
+				if(!arka) return res.status(403).send({ error: "arka_not_found" })
+
+				for (var i = 0; i < arka.animations.length; i++) {
+					const animation = arka.animations[i]
+					
+					const raw = rawAnimations.filter(raw => { return animation.identificator === raw.identificator })[0]
+					if(!raw) continue
+					
+					animation.layerTop = raw.layers.top
+					animation.layerMiddle = raw.layers.middle
+					animation.layerBottom = raw.layers.bottom
+					
+					await animation.save()
+				}
 			}
 		}
-
-		if(!arka) return res.status(403).send({ error: "arka_not_found" })
-
-		arka.animations = animations
-
-		await arka.save()
 
 		res.send({ ok: true })
 	}

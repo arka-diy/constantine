@@ -16,36 +16,14 @@ function animatorSave() {
 
 	var animations = [{
 		identificator: "main",
-		layerTop: [],
-		layerMiddle: [],
-		layerBottom: []
+		layers: { top: [], middle: [], bottom: [] }
 	}];
 
-	// TODO: not tested:
-
-	for (var i = 0; i < context.animator.layers.top.length; i++) {
-		for (var j = 0; j < context.animator.layers.top[i].length; j++) {
-			var frame = context.animator.layers.top[i][j];
-			var packed = frame.frame.map((line) => { return line.map((pixel) => { return pixel.toString() }).join("") }).join("")
-			layerTop.push(frame.type + ":" + frame.index + ":" + packed);
+	["top", "middle", "bottom"].forEach((layer) => {
+		for (var i = 0; i < context.animator.layers[layer].length; i++) {
+			animations[0].layers[layer].push(zip(context.animator.layers[layer][i]));
 		}
-	}
-
-	for (var i = 0; i < context.animator.layers.middle.length; i++) {
-		for (var j = 0; j < context.animator.layers.middle[i].length; j++) {
-			var frame = context.animator.layers.middle[i][j];
-			var packed = frame.frame.map((line) => { return line.map((pixel) => { return pixel.toString() }).join("") }).join("")
-			layerMiddle.push(frame.type + ":" + frame.index + ":" + packed);
-		}
-	}
-
-	for (var i = 0; i < context.animator.layers.bottom.length; i++) {
-		for (var j = 0; j < context.animator.layers.bottom[i].length; j++) {
-			var frame = context.animator.layers.bottom[i][j];
-			var packed = frame.frame.map((line) => { return line.map((pixel) => { return pixel.toString() }).join("") }).join("")
-			layerBottom.push(frame.type + ":" + frame.index + ":" + packed);
-		}
-	}
+	});
 
 	xhrSave(context.slider.arkas[context.slider.slides[context.slider.index].getAttribute("data-arka")].identificator, animations);
 }
@@ -223,11 +201,23 @@ function initAnimator() {
 	});
 }
 
-function loadAnimator() {
+function loadAnimator(create) {
+	create = create || false;
+
 	context.animator.layers = {
-		top: [{ index: 0, type: "key", frame: JSON.parse(JSON.stringify(context.painter.frame)) }],
+		top: create ? [{ index: 0, type: "key", frame: JSON.parse(JSON.stringify(context.painter.frame)) }] : [],
 		middle: [], bottom: []
 	};
+
+	var animation = context.slider.arkas[context.slider.slides[context.slider.index].getAttribute("data-arka")].animations.filter(animation => { return animation.identificator === "main" })[0];
+	if(!animation) return alert("Error");
+	console.log(animation);
+
+	["Top", "Middle", "Bottom"].forEach((layer) => {
+		for (var i = 0; i < animation["layer" + layer].length; i++) {
+			context.animator.layers[layer.toLowerCase()].push(unzip(animation["layer" + layer][i]));
+		}
+	});
 
 	context.animator.selectedLayer = "top";
 	context.animator.selectedIndex = 0;
