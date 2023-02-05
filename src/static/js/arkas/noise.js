@@ -1,7 +1,7 @@
 function loadNoiseArka() {
 	var arka = new Arka();
 
-	arka.setAnimation("noise", (parameters) => {
+	arka.setAnimation("noise", () => {
 		var frames = [];
 
 		// Generating 30 random frames

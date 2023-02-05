@@ -1,6 +1,22 @@
 // Internal
 
 function initSlider() {
+	context.UI.sliderView.innerHTML = "";
+	context.slider.arkas = {};
+
+	for (var i = 0; i < data.arkas.length; i++) {
+		var arka = data.arkas[i];
+
+		var slide = document.createElement("div");
+		slide.classList.add("slide");
+		if(i === 0) slide.classList.add("active");
+		slide.setAttribute("data-arka", arka.identificator);
+
+		context.UI.sliderView.appendChild(slide);
+
+		context.slider.arkas[arka.identificator] = arka;
+	}
+	
 	context.slider.slides = context.UI.sliderView.children;
 
 	for (var i = 0; i < context.slider.slides.length; i++) {

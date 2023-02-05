@@ -13,6 +13,41 @@ function animatorOpen() {
 
 function animatorSave() {
 	animatorClose();
+
+	var animations = [{
+		identificator: "main",
+		layerTop: [],
+		layerMiddle: [],
+		layerBottom: []
+	}];
+
+	// TODO: not tested:
+
+	for (var i = 0; i < context.animator.layers.top.length; i++) {
+		for (var j = 0; j < context.animator.layers.top[i].length; j++) {
+			var frame = context.animator.layers.top[i][j];
+			var packed = frame.frame.map((line) => { return line.map((pixel) => { return pixel.toString() }).join("") }).join("")
+			layerTop.push(frame.type + ":" + frame.index + ":" + packed);
+		}
+	}
+
+	for (var i = 0; i < context.animator.layers.middle.length; i++) {
+		for (var j = 0; j < context.animator.layers.middle[i].length; j++) {
+			var frame = context.animator.layers.middle[i][j];
+			var packed = frame.frame.map((line) => { return line.map((pixel) => { return pixel.toString() }).join("") }).join("")
+			layerMiddle.push(frame.type + ":" + frame.index + ":" + packed);
+		}
+	}
+
+	for (var i = 0; i < context.animator.layers.bottom.length; i++) {
+		for (var j = 0; j < context.animator.layers.bottom[i].length; j++) {
+			var frame = context.animator.layers.bottom[i][j];
+			var packed = frame.frame.map((line) => { return line.map((pixel) => { return pixel.toString() }).join("") }).join("")
+			layerBottom.push(frame.type + ":" + frame.index + ":" + packed);
+		}
+	}
+
+	xhrSave(context.slider.arkas[context.slider.slides[context.slider.index].getAttribute("data-arka")].identificator, animations);
 }
 
 function animatorClose() {
@@ -75,22 +110,22 @@ function animatorInsertFrame(keyframe) {
 
 	switch(action) {
 	case "keyframe":
-		layer.push({ index, type: "key", frame: makeEmptyFramePainter(), empty: true });
+		layer.push({ index, type: "key", frame: makeEmptyFramePainter() });
 		break
 	case "cut":
 		layer.push({ index, type: "cut" });
 		break
 	case "cutleft+keyframe":
 		layer.push({ index: index-1, type: "cut" });
-		layer.push({ index, type: "key", frame: makeEmptyFramePainter(), empty: true });
+		layer.push({ index, type: "key", frame: makeEmptyFramePainter() });
 		break
 	case "removecut+keyframe":
 		layer.splice(layer.indexOf(layer[i]), 1);
-		layer.push({ index, type: "key", frame: makeEmptyFramePainter(), empty: true });
+		layer.push({ index, type: "key", frame: makeEmptyFramePainter() });
 		break
 	case "movecutleft+keyframe":
 		layer[i - 1].index -= 1;
-		layer.push({ index, type: "key", frame: makeEmptyFramePainter(), empty: true });
+		layer.push({ index, type: "key", frame: makeEmptyFramePainter() });
 		break
 	case "movecut":
 		layer[i - 1].index = index;
@@ -150,16 +185,16 @@ function animatorRemoveFrame() {
 		layer[i].index -= 1;
 		break
 	case "keyframeright":
-		layer.push({ index: index + 1, type: "key", frame: JSON.parse(JSON.stringify(layer[i - 1].frame)), empty: checkEmptyFramePainter(layer[i - 1].frame) });
+		layer.push({ index: index + 1, type: "key", frame: JSON.parse(JSON.stringify(layer[i - 1].frame)) });
 		break
 	case "cutleft+keyframeright":
 		layer.push({ index: index - 1, type: "cut" });
-		layer.push({ index: index + 1, type: "key", frame: JSON.parse(JSON.stringify(layer[i - 1].frame)), empty: checkEmptyFramePainter(layer[i - 1].frame) });
+		layer.push({ index: index + 1, type: "key", frame: JSON.parse(JSON.stringify(layer[i - 1].frame)) });
 		break
 	case "removecutright+cutleft+keyframeright":
 		layer.splice(layer.indexOf(layer[i]), 1);
 		layer.push({ index: index - 1, type: "cut" });
-		layer.push({ index: index + 1, type: "key", frame: JSON.parse(JSON.stringify(layer[i - 1].frame)), empty: checkEmptyFramePainter(layer[i - 1].frame) });
+		layer.push({ index: index + 1, type: "key", frame: JSON.parse(JSON.stringify(layer[i - 1].frame)) });
 	}
 
 	redrawTimelineAnimator();
@@ -190,7 +225,7 @@ function initAnimator() {
 
 function loadAnimator() {
 	context.animator.layers = {
-		top: [{ index: 0, type: "key", empty: true, frame: JSON.parse(JSON.stringify(context.painter.frame)) }],
+		top: [{ index: 0, type: "key", frame: JSON.parse(JSON.stringify(context.painter.frame)) }],
 		middle: [], bottom: []
 	};
 
@@ -213,7 +248,7 @@ function redrawTimelineAnimator() {
 		frameView.classList.remove("top");
 		frameView.classList.remove("selected");
 	});
-
+	
 	["top", "middle", "bottom"].forEach((layer) => {
 		var frames = document.querySelectorAll("main .panel .timeline .layer." + layer + " .frame");
 
@@ -245,7 +280,9 @@ function redrawTimelineAnimator() {
 					}
 				}
 
-				if(frame.empty || (frame.type === "cut" && empty)) frameView.classList.add("empty");
+				var frameEmpty = checkEmptyFramePainter(frame.frame);
+
+				if((frame.type !== "cut" && frameEmpty) || (frame.type === "cut" && empty)) frameView.classList.add("empty");
 
 				if(between) {
 					between = false;
@@ -255,7 +292,7 @@ function redrawTimelineAnimator() {
 					var nextFrame = context.animator.layers[layer][nextIndex];
 					if(nextFrame && nextFrame.type === "cut") {
 						between = true;
-						empty = frame.empty || false;
+						empty = frameEmpty;
 					} else {
 						selected = false;
 					}
@@ -376,7 +413,6 @@ function saveFrameAnimator() {
 
 	if(frameIndex >= 0) {
 		context.animator.layers[context.animator.selectedLayer][frameIndex].frame = JSON.parse(JSON.stringify(context.painter.frame));
-		context.animator.layers[context.animator.selectedLayer][frameIndex].empty = checkEmptyFramePainter(context.painter.frame);
 	}
 
 	redrawTimelineAnimator();

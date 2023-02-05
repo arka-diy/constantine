@@ -28,23 +28,10 @@ function screenLoad() {
 	context.UI.infoView.classList.add("transparent");
 
 	setTimeout(() => {
-		var arka;
-
-		switch(context.slider.slides[context.slider.index].getAttribute("data-arka")) {
-		case "noise":
-			arka = loadNoiseArka();
-			break
-		case "standby":
-			arka = loadStandbyArka();
-			break
-		case "torrent":
-			arka = loadTorrentArka();
-			break
-		}
-
+		var arka = context.slider.arkas[context.slider.slides[context.slider.index].getAttribute("data-arka")];
 		if(!arka) return;
 		
-		context.screen.frames = arka.preview;
+		context.screen.frames = [makeEmptyFramePainter()]; // TODO: preview
 
 		document.querySelector("main .panel .info h1").innerText = arka.title;
 		document.querySelector("main .panel .info h3").innerText = arka.author;

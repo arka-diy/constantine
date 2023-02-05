@@ -58,6 +58,8 @@ function makeEmptyFramePainter() {
 }
 
 function checkEmptyFramePainter(frame) {
+	if(!frame) return true;
+
 	for (var i = 0; i < frame.length; i++) {
 		for (var j = 0; j < frame[i].length; j++) {
 			if(frame[i][j] !== "0000") return false;

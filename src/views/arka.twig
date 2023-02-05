@@ -23,9 +23,9 @@
 
 	<main>
 		<div class="slider">
-			<div class="slide active" data-arka="standby"></div>
+			<!-- <div class="slide active" data-arka="standby"></div>
 			<div class="slide" data-arka="torrent"></div>
-			<div class="slide" data-arka="noise"></div>
+			<div class="slide" data-arka="noise"></div> -->
 		</div>
 		<div class="panel">
 			<div class="magnifier">
@@ -102,13 +102,12 @@
 		<div class="close button">Close</div>
 	</div>
 
+	<script>
+		var data = { arkas: {{ arkas }} };
+	</script>
+
 	<script src="/js/xhr.js"></script>
 	<script src="/js/xhr.arka.js"></script>
-
-	<script src="/js/arkas/arka.js"></script>
-	<script src="/js/arkas/noise.js"></script>
-	<script src="/js/arkas/standby.js"></script>
-	<script src="/js/arkas/torrent.js"></script>
 
 	<script src="/js/arka.utilities.js"></script>
 	<script src="/js/arka.screen.js"></script>

@@ -32,6 +32,7 @@ var context = {
 	},
 
 	slider: {
+		arkas: [],
 		slides: null,
 		timer: null,
 
