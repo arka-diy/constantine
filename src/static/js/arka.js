@@ -14,6 +14,8 @@ var context = {
 
 		timelineView: document.querySelector("main .panel .timeline"),
 		timelineMenuView: document.querySelector("main .panel .timeline .menu"),
+		timelineIndicatorView: document.querySelector("main .panel .timeline .indicator"),
+		timelinePlayButton: document.querySelector("main .panel .timeline .play"),
 
 		animatorInsertFrameButton: document.querySelector("main .panel .timeline .menu .insert-frame"),
 		animatorInsertKeyframeButton: document.querySelector("main .panel .timeline .menu .insert-keyframe"),
@@ -68,7 +70,8 @@ var context = {
 		menuTimer: null,
 		layers: null,
 		selectedLayer: null,
-		selectedIndex: null
+		selectedIndex: null,
+		playTimer: null
 	}
 
 }
@@ -80,6 +83,8 @@ document.querySelector("main .panel .info .preview").addEventListener("click", x
 document.querySelector("main .panel .magnifier .magnify1x").addEventListener("click", () => { screenMagnify(1) });
 document.querySelector("main .panel .magnifier .magnify2x").addEventListener("click", () => { screenMagnify(2) });
 document.querySelector("main .panel .magnifier .magnify3x").addEventListener("click", () => { screenMagnify(3) });
+
+context.UI.timelinePlayButton.addEventListener("click", animatorPlay);
 
 context.UI.animatorInsertFrameButton.addEventListener("click", animatorInsertFrame);
 context.UI.animatorInsertKeyframeButton.addEventListener("click", animatorInsertKeyframe);

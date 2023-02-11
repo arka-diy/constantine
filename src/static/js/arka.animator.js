@@ -11,6 +11,25 @@ function animatorOpen() {
 	context.UI.cornerPanelView.classList.remove("transparent");
 }
 
+function animatorPlay() {
+	if(context.animator.playTimer) {
+		context.UI.timelinePlayButton.style.backgroundImage = "url(/images/play.svg)";
+
+		clearInterval(context.animator.playTimer);
+		context.animator.playTimer = null;
+	} else {
+		context.UI.timelinePlayButton.style.backgroundImage = "url(/images/pause.svg)";
+
+		context.animator.playIndex = 0;
+		context.animator.playTimer = setInterval(() => {
+			combineFrameAnimator(context.animator.playIndex);
+
+			context.animator.playIndex++;
+			if(context.animator.playIndex >= 30) context.animator.playIndex = 0;
+		}, 40);
+	}
+}
+
 function animatorSave() {
 	animatorClose();
 
@@ -199,6 +218,15 @@ function initAnimator() {
 			framesView.appendChild(frameView);
 		}
 	});
+
+	for (var i = 0; i < 30; i++) {
+		var frameView = document.createElement("div");
+		frameView.classList.add("frame");
+		frameView.addEventListener("mouseover", indicatorShowAnimator);
+		frameView.addEventListener("mouseleave", indicatorHideAnimator);
+		
+		document.querySelector("main .panel .timeline .header .buttons").appendChild(frameView);
+	}
 }
 
 function loadAnimator(create) {
@@ -211,7 +239,6 @@ function loadAnimator(create) {
 
 	var animation = context.slider.arkas[context.slider.slides[context.slider.index].getAttribute("data-arka")].animations.filter(animation => { return animation.identificator === "main" })[0];
 	if(!animation) return alert("Error");
-	console.log(animation);
 
 	["Top", "Middle", "Bottom"].forEach((layer) => {
 		for (var i = 0; i < animation["layer" + layer].length; i++) {
@@ -223,6 +250,55 @@ function loadAnimator(create) {
 	context.animator.selectedIndex = 0;
 
 	redrawTimelineAnimator();
+}
+
+function indicatorShowAnimator() {
+	var index = Array.prototype.indexOf.call(this.parentElement.children, this);
+
+	combineFrameAnimator(index);
+}
+
+function indicatorHideAnimator() {
+	var index = Array.prototype.indexOf.call(this.parentElement.children, this);
+
+	context.UI.timelineIndicatorView.style.opacity = 0;
+}
+
+function combineFrameAnimator(index) {
+	context.UI.timelineIndicatorView.style.opacity = 0.5;
+	context.UI.timelineIndicatorView.style.left = (114 + 10 * index) + "px";
+
+	renderScreen(combinedFrameAnimator(index));
+}
+
+function combinedFrameAnimator(index) {
+	var combinedFrame = [];
+
+	["bottom", "middle", "top"].forEach((layer) => {
+		var lastKeyFrame, currentFrame;
+
+		for (var i = 0; i < context.animator.layers[layer].length; i++) {
+			var frame = context.animator.layers[layer][i];
+			if(frame.index >= index) {
+				if(frame.type === "key" && frame.index === index) currentFrame = frame;
+				else if(frame.type === "cut" && lastKeyFrame) currentFrame = lastKeyFrame;
+				break;
+			} else if(frame.type === "key") lastKeyFrame = frame;
+		}
+		
+		if(currentFrame) {
+			if(combinedFrame.length) {
+				for (var i = 0; i < combinedFrame.length; i++) {
+					for (var j = 0; j < combinedFrame[i].length; j++) {
+						var newColor = currentFrame.frame[i][j];
+						if(newColor !== "0000") combinedFrame[i][j] = newColor;
+					}
+				}
+			} else combinedFrame = JSON.parse(JSON.stringify(currentFrame.frame));
+		}
+	});
+
+	return combinedFrame;
 }
 
 function redrawTimelineAnimator() {
