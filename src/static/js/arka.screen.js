@@ -28,19 +28,24 @@ function screenLoad() {
 	context.UI.infoView.classList.add("transparent");
 
 	setTimeout(() => {
-		var arka = context.slider.arkas[context.slider.slides[context.slider.index].getAttribute("data-arka")];
-		if(!arka) return;
+		var arka
+
+		if(context && context.slider && context.slider.slides && context.slider.slides.length) {
+			arka = context.slider.arkas[context.slider.slides[context.slider.index].getAttribute("data-arka")];
+		}
 		
 		context.screen.frames = [makeEmptyFramePainter()]; // TODO: preview
 
-		document.querySelector("main .panel .info h1").innerText = arka.title;
-		document.querySelector("main .panel .info h3").innerText = arka.author;
-		document.querySelector("main .panel .info .description").innerText = arka.description;
+		if(arka) {
+			document.querySelector("main .panel .info h1").innerText = arka.title;
+			document.querySelector("main .panel .info h3").innerText = arka.author;
+			document.querySelector("main .panel .info .description").innerText = arka.description;
 
-		if(arka.editable) {
-			context.UI.editButton.classList.remove("displaynone");
-		} else {
-			context.UI.editButton.classList.add("displaynone");
+			if(arka.editable) {
+				context.UI.editButton.classList.remove("displaynone");
+			} else {
+				context.UI.editButton.classList.add("displaynone");
+			}
 		}
 		
 		context.UI.screenView = document.querySelector("main .slider .slide.active .screen");

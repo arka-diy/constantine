@@ -1,5 +1,6 @@
 function animatorOpen() {
 	loadAnimator();
+	animatorStop();
 
 	initPainter();
 	initPalette();
@@ -13,10 +14,7 @@ function animatorOpen() {
 
 function animatorPlay() {
 	if(context.animator.playTimer) {
-		context.UI.timelinePlayButton.style.backgroundImage = "url(/images/play.svg)";
-
-		clearInterval(context.animator.playTimer);
-		context.animator.playTimer = null;
+		animatorStop();
 	} else {
 		context.UI.timelinePlayButton.style.backgroundImage = "url(/images/pause.svg)";
 
@@ -25,9 +23,16 @@ function animatorPlay() {
 			combineFrameAnimator(context.animator.playIndex);
 
 			context.animator.playIndex++;
-			if(context.animator.playIndex >= 30) context.animator.playIndex = 0;
+			if(context.animator.playIndex >= Math.max(...Object.values(context.animator.layers).flat().map(l => l.index))) context.animator.playIndex = 0;
 		}, 40);
 	}
+}
+
+function animatorStop() {
+	context.UI.timelinePlayButton.style.backgroundImage = "url(/images/play.svg)";
+
+	clearInterval(context.animator.playTimer);
+	context.animator.playTimer = null;
 }
 
 function animatorSave() {
@@ -43,6 +48,8 @@ function animatorSave() {
 			animations[0].layers[layer].push(zip(context.animator.layers[layer][i]));
 		}
 	});
+
+	context.slider.arkas[context.slider.slides[context.slider.index].getAttribute("data-arka")].animations = animations;
 
 	xhrSave(context.slider.arkas[context.slider.slides[context.slider.index].getAttribute("data-arka")].identificator, animations);
 }
@@ -250,6 +257,8 @@ function loadAnimator(create) {
 	context.animator.selectedIndex = 0;
 
 	redrawTimelineAnimator();
+
+	renderScreen(combinedFrameAnimator(context.animator.selectedIndex));
 }
 
 function indicatorShowAnimator() {
@@ -262,6 +271,8 @@ function indicatorHideAnimator() {
 	var index = Array.prototype.indexOf.call(this.parentElement.children, this);
 
 	context.UI.timelineIndicatorView.style.opacity = 0;
+
+	renderScreen(combinedFrameAnimator(context.animator.selectedIndex));
 }
 
 function combineFrameAnimator(index) {

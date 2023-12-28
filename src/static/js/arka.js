@@ -105,3 +105,5 @@ document.querySelector(".draw-sharer .copy").addEventListener("click", animatorS
 initSlider();
 initAnimator();
 screenLoad();
+loadAnimator();
+animatorPlay();
