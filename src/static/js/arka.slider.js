@@ -52,9 +52,7 @@ function stickSlider() {
 	context.slider.slides[context.slider.index].classList.add("active");
 
 	screenLoad();
-
-	loadAnimator();
-	animatorPlay();
+	setTimeout(loadAnimator, 1000);
 	
 	window.scrollTo({
 		top: 0,

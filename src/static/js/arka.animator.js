@@ -434,6 +434,25 @@ function frameSelectAnimator(frameView) {
 	}
 }
 
+function animatorDeleteSelectedFrame() {
+	var index = context.animator.layers[context.animator.selectedLayer].findIndex(frame => { return frame.index === context.animator.selectedIndex && frame.type === "key" });
+
+	if(index >= 0) {
+		if(checkEmptyFramePainter(context.animator.layers[context.animator.selectedLayer][index].frame)) {
+			context.animator.layers[context.animator.selectedLayer].splice(index, 1);
+
+			if(context.animator.layers[context.animator.selectedLayer][index] && context.animator.layers[context.animator.selectedLayer][index].type === "cut") {
+				context.animator.layers[context.animator.selectedLayer].splice(index, 1);
+			}
+		} else {
+			context.animator.layers[context.animator.selectedLayer][index].frame = makeEmptyFramePainter();
+		}
+
+		renderScreen(combinedFrameAnimator(context.animator.selectedIndex));
+		redrawTimelineAnimator();
+	}
+}
+
 function getFrameLayerAnimator(frameView) {
 	if(frameView.parentElement.parentElement.classList.contains("top")) {
 		return "top";

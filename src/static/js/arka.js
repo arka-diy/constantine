@@ -100,6 +100,24 @@ document.querySelector(".draw-corner-panel .share").addEventListener("click", an
 document.querySelector(".draw-sharer .close").addEventListener("click", animatorShareClose);
 document.querySelector(".draw-sharer .copy").addEventListener("click", animatorShareCopy);
 
+document.addEventListener("keydown", event => {
+	switch(event.key.toLowerCase()) {
+	case "backspace":
+	case "delete":
+		animatorDeleteSelectedFrame();
+	break;
+	case "1":
+		screenMagnify(1);
+	break;
+	case "2":
+		screenMagnify(2);
+	break;
+	case "3":
+		screenMagnify(3);
+	break;
+	}
+});
+
 // Init
 
 initSlider();
